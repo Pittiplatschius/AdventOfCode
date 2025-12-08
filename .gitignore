@@ -1,3 +1,18 @@
-1/build/
-2/build/
 *.txt
+
+# Ignore all build dirs everywhere
+**/build/
+**/out/
+**/bin/
+**/cmake-build-*/
+
+# ---- Build artifacts ----
+build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+Makefile
+*.make
+*.ninja
+*.ninja_deps
+*.ninja_log

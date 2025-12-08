@@ -8,57 +8,73 @@ using namespace std;
 
 long addedInvalidNumbers = 0;
 
-void cutRanges(string range) {
+bool isInvalidID(const std::string& s) {
+	const int n = s.size();
+	for (int len = 1; len <= n / 2; len++) {
+		if (n % len != 0) continue;
+		std::string pattern = s.substr(0, len);
+		bool match = true;
+		for (int i = len; i < n; i += len) {
+			if (s.substr(i, len) != pattern) {
+				match = false;
+				break;
+			}
+		}
+		if (match) {
+			cout << s << endl;
+			return true;
+		}
+	}
+	return false;
+}
+
+void cutRanges(const string& range) {
 	stringstream rangeAsStream(range);
 	string rangeSegment;
 	vector<long> seglist;
-
-	//cout << "-----------------------" << endl;
 
 	while (getline(rangeAsStream, rangeSegment, '-')) {
 		seglist.push_back(stol(rangeSegment));
 	}
 
 	for (long i = seglist[0]; i <= seglist[1]; i++) {
-		
-		if (to_string(i).length() % 2 == 0) {
-			//cout << i << ": " << to_string(i).length() << endl;
+		string intAsString = to_string(i);
 
-			string intAsString = to_string(i);
-			int stringLength = intAsString.length();
+		if (isInvalidID(intAsString)) {
+			addedInvalidNumbers += i;
+		}
+
+		if (to_string(i).length() % 2 == 0) {
+
+			const auto stringLength = intAsString.length();
 			string subStringOne = intAsString.substr(0, stringLength / 2);
 			string subStringTwo = intAsString.substr(stringLength / 2, stringLength);
 
-			//cout << subStringOne << " and " << subStringTwo << endl;
-
 			if (subStringOne == subStringTwo) {
-				addedInvalidNumbers = addedInvalidNumbers + i;
+				//addedInvalidNumbers = addedInvalidNumbers + i;
 			}
 		}
 	}
-
-	for (long i = seglist[0]; i <= seglist[1]; i++) {
-		cout << to_string(i).at(0) << endl;
-	}
-	
 }
 
 int main()
 {
-	string file_path = "test.txt";
-	ifstream file(file_path);
+	string file_path = "input.txt";
+	ifstream MyReadFile(file_path);
 	string line;
 	vector<string> inputSeparated;
 
-	while (getline(file, line, ',')) {
+	while (getline(MyReadFile, line, ',')) {
 		inputSeparated.push_back(line);
 	}
 
-	for (auto range : inputSeparated) {
+	for (const auto& range : inputSeparated) {
 		cutRanges(range);
 	}
 
     cout << "----------SOLUTION: " << addedInvalidNumbers << "----------" << endl;
+
+	MyReadFile.close();
 
 	return 0;
 }
