@@ -8,6 +8,7 @@ using namespace std;
 
 long addedInvalidNumbers = 0;
 
+//Diese funktion wurde nicht mit chatgpt gemacht
 bool isInvalidID(const std::string& s) {
 	const int n = s.size();
 	for (int len = 1; len <= n / 2; len++) {
