@@ -1,82 +1,61 @@
 #include <iostream>
-#include <string>
 #include <fstream>
+#include <string>
 
 using namespace std;
 
-int totalJoltage = 0;
+string foundNumbers;
+long solution = 0;
 
-int calculateMaxJoltage(string& joltageAsString) {
-    char one = joltageAsString[0];
-    int stateOfCurser = 0;
-    long calculatedJoltage = 0;
-    string twelveDigitsJoltage;
-    string three;
-    int numberOfDigits = 0;
+void findBiggestNumber(const string &inputString) {
+  int number = 0;
+  int cursorState = 0;
+  int numbersNeeded = 12;
+  string newString = inputString;
 
-    //while (twelveDigitsJoltage.length() != 12) {}
+  while (foundNumbers.length() != 12) {
+    if (newString.length() > numbersNeeded && numbersNeeded > 0) {
+      for (int i = 0; i <= newString.length() - numbersNeeded; i++) {
+        const int cursorInt = newString[i] - '0';
 
-    for (int i = 1; i < joltageAsString.size() - 12 ; i++) {
-        if (one < joltageAsString[i]) {
-            one = joltageAsString[i];
-            stateOfCurser = i;
+        if (cursorInt > number) {
+          number = cursorInt;
+          cursorState = i;
         }
+      }
+
+      foundNumbers += newString[cursorState];
+      numbersNeeded--;
+      newString = newString.erase(0, cursorState + 1);
+      cursorState = 0;
+      number = 0;
+
+    } else {
+      foundNumbers += newString;
+
+      return;
     }
-
-    three += one;
-    numberOfDigits++;
-    joltageAsString.erase(0, stateOfCurser + 1);
-    cout << "gecuted: " << joltageAsString << endl;
-
-    while (numberOfDigits != 12) {
-        one = joltageAsString[0];
-        if (joltageAsString.length() < 12 - numberOfDigits) {
-            for (int i = 1; i < joltageAsString.size() - 12 ; i++) {
-                if (one < joltageAsString[i]) {
-                    one = joltageAsString[i];
-                    stateOfCurser = i;
-                }
-            }
-
-            three += one;
-            numberOfDigits++;
-            joltageAsString.erase(0, stateOfCurser + 1);
-        } else {
-            for (int i = 1; i < joltageAsString.size(); i++) {
-                if (one < joltageAsString[i]) {
-                    one = joltageAsString[i];
-                    stateOfCurser = i;
-                }
-            }
-
-            three += one;
-            numberOfDigits++;
-            //joltageAsString.erase(0, stateOfCurser + 1);
-        }
-    }
-
-    calculatedJoltage = stol(three);
-
-    //cout << "ergebnis: " << one << two << endl;
-    //cout << "Ergebnis: " << three << endl;
-    cout << "Eergebnis: " << calculatedJoltage << endl;
-
-    return calculatedJoltage;
+  }
 }
 
-int main() {
+int main()
+{
+    string inputText;
 
-    const string file_path = "test.txt";
-    ifstream file(file_path);
-    string line;
+    ifstream ReadInputFile("input.txt");
 
-    unsigned long result = 0;
+    while (getline(ReadInputFile, inputText)) {
 
-    while (getline(file, line)) {
-        result += calculateMaxJoltage(line);
+      if (!inputText.empty() && inputText.back() == '\r') {
+        inputText.pop_back();
+      }
+
+      findBiggestNumber(inputText);
+      solution += stol(foundNumbers);
+      foundNumbers.clear();
     }
 
-    cout << "----------SOLUTION: " << result << "----------" << endl;
+    cout << "Ergebnis: " << solution << endl;
 
     return 0;
 }
