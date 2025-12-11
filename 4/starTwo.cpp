@@ -6,6 +6,8 @@ using namespace std;
 
 int vecRows = 0;
 int accessableRolls = 0;
+int totalOfRemovedRolls = 0;
+bool accessableRollsThere = true;
 
 vector<vector<char>> rollShelfVec;
 vector<vector<char>> rollShelfVecCopy;
@@ -57,7 +59,6 @@ int countAdjacentRolls (int& i, int& j) {
 
       if (rollShelfVec.at(xAchse).at(yAchse) == '@') {
         adjacentRolls++;
-        continue;
       }
     }
   }
@@ -82,34 +83,59 @@ void countAccessableRolls() {
       }
     }
   }
+
+  if (accessableRolls == 0) {
+    accessableRollsThere = false;
+  }
+}
+
+void removeRollsOfPaper() {
+  int removedRolls = 0;
+
+  for (int i = 0; i < rollShelfVecCopy.size(); i++) {
+    for (int j = 0; j < rollShelfVecCopy.at(i).size(); j++) {
+
+      if (rollShelfVecCopy.at(i).at(j) == 'x') {
+        rollShelfVecCopy.at(i).at(j) = '.';
+        removedRolls++;
+      }
+    }
+  }
+
+  accessableRolls = 0;
+  totalOfRemovedRolls += removedRolls;
+  rollShelfVec = rollShelfVecCopy;
 }
 
 int main()
 {
-    string inputLine;
+  string inputLine;
 
-    ifstream ReadInputFile("input.txt");
+  ifstream ReadInputFile("input.txt");
 
-    while (getline(ReadInputFile, inputLine)) {
+  while (getline(ReadInputFile, inputLine)) {
 
-      if (!inputLine.empty() && inputLine.back() == '\r') {
-        inputLine.pop_back();
-      }
-
-      fillRollShelfVec(inputLine);
+    if (!inputLine.empty() && inputLine.back() == '\r') {
+      inputLine.pop_back();
     }
-    ReadInputFile.close();
 
-    //das hier am Ende auskommentieren weil sonst zu Groß
-    printRollShelfVec();
+    fillRollShelfVec(inputLine);
+  }
+  ReadInputFile.close();
+  rollShelfVecCopy = rollShelfVec;
 
-    cout << "----------------------" << endl;
+  printRollShelfVec();
 
-    rollShelfVecCopy = rollShelfVec;
+  while (accessableRollsThere == true) {
+    cout << endl;
     countAccessableRolls();
-    printRollShelfVecCopy();
+    cout << "Remove " << accessableRolls << " rolls of paper: " << endl;
+    rollShelfVec = rollShelfVecCopy;
+    printRollShelfVec();
+    removeRollsOfPaper();
+  }
 
-    cout << "-----------Ergebnis: " << accessableRolls << "-----------" << endl;
+  cout << "-----------Ergebnis: " << totalOfRemovedRolls << "-----------" << endl;
 
-    return 0;
+  return 0;
 }
